@@ -3,14 +3,24 @@ export interface User {
     password: string;
 }
 
+export interface InvalidLoginData {
+    username: string;
+    password: string;
+    expectedError: string;
+}
+
 export const users = {
     standard: {
         username: 'standard_user',
         password: 'secret_sauce',
     } satisfies User,
+};
 
-    invalid: {
+export const invalidLoginData: InvalidLoginData[] = [
+    {
         username: 'invalid_user',
         password: 'invalid_password',
-    } satisfies User,
-};
+        expectedError:
+            'Epic sadface: Username and password do not match any user in this service',
+    },
+];
