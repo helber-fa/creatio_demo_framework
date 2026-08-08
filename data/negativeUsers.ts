@@ -1,5 +1,3 @@
-import { CreateUserRequest } from '../api/models/User';
-
 export interface InvalidUserData {
     description: string;
     data: Record<string, unknown>;

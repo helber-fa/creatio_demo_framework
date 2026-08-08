@@ -37,4 +37,10 @@ export class CartPage extends BasePage {
             .innerText();
         return Number(priceText.replace('$', ''));
     }
+
+    async expectProductNotAdded(product: Product): Promise<void> {
+        await expect(
+            this.page.getByText(product.name)
+        ).not.toBeVisible();
+    }
 }

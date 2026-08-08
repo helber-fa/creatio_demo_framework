@@ -16,6 +16,7 @@ export default defineConfig({
   reporter: 'html',
   use: {
     baseURL: environment.uiBaseUrl,
+    screenshot: 'only-on-failure',
     trace: 'on-first-retry',
   },
 

@@ -31,6 +31,19 @@ export class InventoryPage extends BasePage {
         await addToCartButton.click();
     }
 
+    async removeProductFromCart(product: Product): Promise<void> {
+        const removeTestId = product.testId.replace(
+            'add-to-cart-',
+            'remove-'
+        );
+
+        const removeButton = this.page.locator(
+            `[data-test="${removeTestId}"]`
+        );
+
+        await removeButton.click();
+    }
+
     async openCart(): Promise<CartPage> {
         await this.shoppingCartLink.click();
 

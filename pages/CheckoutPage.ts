@@ -7,6 +7,7 @@ export class CheckoutPage extends BasePage {
     private readonly lastNameInput: Locator;
     private readonly postalCodeInput: Locator;
     private readonly continueButton: Locator;
+    private readonly errorMessage: Locator;
 
     constructor(page: Page) {
         super(page);
@@ -17,6 +18,7 @@ export class CheckoutPage extends BasePage {
         this.continueButton = this.page.getByRole('button', {
             name: 'Continue',
         });
+        this.errorMessage = this.page.locator('[data-test="error"]');
     }
 
     async fillCustomerInformation(
@@ -27,6 +29,10 @@ export class CheckoutPage extends BasePage {
         await this.firstNameInput.fill(firstName);
         await this.lastNameInput.fill(lastName);
         await this.postalCodeInput.fill(postalCode);
+    }
+
+    async expectCheckoutError(message: string): Promise<void> {
+        await expect(this.errorMessage).toContainText(message);
     }
 
     async continue(): Promise<CheckoutOverviewPage> {
