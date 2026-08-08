@@ -1,25 +1,19 @@
-import { test, expect } from '@playwright/test';
-import { LoginPage } from '../../pages/LoginPage';
 import { invalidLoginData, users } from '../../data/users';
+import { test, expect } from '../../fixtures/test';
 
-test('user can login successfully', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-
+test('user can login successfully', async ({ loginPage }) => {
     await loginPage.open();
-    await loginPage.login(
+    const inventoryPage = await loginPage.login(
         users.standard.username,
         users.standard.password);
 
-    await expect(page).toHaveURL(/inventory/);
-    await expect(page.getByText('Products')).toBeVisible();
+    await inventoryPage.expectPageOpened();
 });
 
 for (const data of invalidLoginData) {
-    test(`user cannot login with invalid credentials: ${data.username}`, async ({ page }) => {
-        const loginPage = new LoginPage(page);
-
+    test(`user cannot login with invalid credentials: ${data.username}`, async ({ loginPage }) => {
         await loginPage.open();
-        await loginPage.login(data.username, data.password);
+        await loginPage.loginExpectingError(data.username, data.password);
 
         await loginPage.expectLoginError(data.expectedError);
     });
