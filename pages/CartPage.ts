@@ -1,6 +1,7 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { Product } from '../data/products';
+import { CheckoutPage } from './CheckoutPage';
 
 export class CartPage extends BasePage {
     private readonly checkoutButton: Locator;
@@ -23,7 +24,9 @@ export class CartPage extends BasePage {
         ).toBeVisible();
     }
 
-    async checkout(): Promise<void> {
+    async checkout(): Promise<CheckoutPage> {
         await this.checkoutButton.click();
+
+        return new CheckoutPage(this.page);
     }
 }

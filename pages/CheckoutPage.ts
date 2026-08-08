@@ -1,5 +1,6 @@
 import { expect, Locator, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
+import { CheckoutOverviewPage } from './CheckoutOverviewPage';
 
 export class CheckoutPage extends BasePage {
     private readonly firstNameInput: Locator;
@@ -28,7 +29,9 @@ export class CheckoutPage extends BasePage {
         await this.postalCodeInput.fill(postalCode);
     }
 
-    async continue(): Promise<void> {
+    async continue(): Promise<CheckoutOverviewPage> {
         await this.continueButton.click();
+
+        return new CheckoutOverviewPage(this.page);
     }
 }

@@ -2,7 +2,7 @@ import { test } from '../../fixtures/test';
 import { products } from '../../data/products';
 import { users } from '../../data/users';
 
-test('user can proceed to checkout', async ({ loginPage }) => {
+test('user can complete purchase', async ({ loginPage }) => {
     await loginPage.open();
 
     const inventoryPage = await loginPage.login(
@@ -26,5 +26,11 @@ test('user can proceed to checkout', async ({ loginPage }) => {
         '21000'
     );
 
-    await checkoutPage.continue();
+    const overviewPage = await checkoutPage.continue();
+
+    await overviewPage.expectProductIncluded(products.backpack);
+
+    const orderCompletePage = await overviewPage.finish();
+
+    await orderCompletePage.expectOrderCompleted();
 });
