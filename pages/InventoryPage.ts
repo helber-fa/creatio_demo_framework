@@ -36,4 +36,15 @@ export class InventoryPage extends BasePage {
 
         return new CartPage(this.page);
     }
+
+    async getProductPrice(product: Product): Promise<number> {
+        const productCard = this.page
+            .locator('.inventory_item')
+            .filter({ hasText: product.name });
+        const priceText = await productCard
+            .locator('.inventory_item_price')
+            .innerText();
+
+        return Number(priceText.replace('$', ''));
+    }
 }

@@ -8,7 +8,6 @@ export class CartPage extends BasePage {
 
     constructor(page: Page) {
         super(page);
-
         this.checkoutButton = this.page.getByRole('button', {
             name: 'Checkout',
         });
@@ -26,7 +25,16 @@ export class CartPage extends BasePage {
 
     async checkout(): Promise<CheckoutPage> {
         await this.checkoutButton.click();
-
         return new CheckoutPage(this.page);
+    }
+
+    async getProductPrice(product: Product): Promise<number> {
+        const cartItem = this.page
+            .locator('.cart_item')
+            .filter({ hasText: product.name });
+        const priceText = await cartItem
+            .locator('.inventory_item_price')
+            .innerText();
+        return Number(priceText.replace('$', ''));
     }
 }
