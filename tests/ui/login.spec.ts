@@ -1,5 +1,5 @@
 import { invalidLoginData, users } from '../../data/users';
-import { test, expect } from '../../fixtures/test';
+import { test } from '../../fixtures/test';
 
 test('user can login successfully', async ({ loginPage }) => {
     await loginPage.open();
