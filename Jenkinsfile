@@ -1,11 +1,29 @@
 pipeline {
 agent any
 
+
+options {
+    buildDiscarder(
+        logRotator(
+            numToKeepStr: '10',
+            artifactNumToKeepStr: '5'
+        )
+    )
+
+    timestamps()
+}
+
 environment {
     DOCKER_IMAGE = 'creatio-demo-framework'
 }
 
 stages {
+
+    stage('Clean Workspace') {
+        steps {
+            deleteDir()
+        }
+    }
 
     stage('Checkout') {
         steps {
@@ -77,7 +95,9 @@ stages {
 }
 
 post {
+
     always {
+
         junit(
             testResults: 'api-results/results.xml,ui-results/results.xml',
             allowEmptyResults: true
@@ -105,6 +125,37 @@ post {
             reportFiles: 'index.html',
             reportName: 'API Playwright Report'
         ])
+
+        script {
+            def result = currentBuild.currentResult
+
+            echo ''
+            echo '========================================'
+            echo '        PLAYWRIGHT TEST SUMMARY'
+            echo '========================================'
+            echo "Build result: ${result}"
+            echo "Build number: ${env.BUILD_NUMBER}"
+            echo ''
+            echo 'API Report: UI → API Playwright Report'
+            echo 'UI Report:  UI → UI Playwright Report'
+            echo 'JUnit results: Test Result'
+            echo 'Artifacts: Build → Artifacts'
+            echo '========================================'
+        }
+    }
+
+    success {
+        echo 'All test stages completed successfully.'
+    }
+
+    unstable {
+        echo 'Build finished with unstable test results.'
+    }
+
+    failure {
+        echo 'Build failed. Check the failed stage and Playwright reports.'
     }
 }
+
+
 }
