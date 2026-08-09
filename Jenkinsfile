@@ -33,15 +33,16 @@ stages {
                 ]) {
                     bat '''
                         if exist api-report rmdir /s /q api-report
-                        if exist test-results rmdir /s /q test-results
+                        if exist api-results rmdir /s /q api-results
 
                         mkdir api-report
-                        mkdir test-results
+                        mkdir api-results
 
                         docker run --rm ^
                             -e GOREST_TOKEN=%GOREST_TOKEN% ^
+                            -e PLAYWRIGHT_JUNIT_OUTPUT_FILE=/app/test-results/results.xml ^
                             -v "%WORKSPACE%\\api-report:/app/playwright-report" ^
-                            -v "%WORKSPACE%\\test-results:/app/test-results" ^
+                            -v "%WORKSPACE%\\api-results:/app/test-results" ^
                             %DOCKER_IMAGE% ^
                             npm run test:api
                     '''
@@ -58,12 +59,15 @@ stages {
             ) {
                 bat '''
                     if exist ui-report rmdir /s /q ui-report
+                    if exist ui-results rmdir /s /q ui-results
 
                     mkdir ui-report
+                    mkdir ui-results
 
                     docker run --rm ^
+                        -e PLAYWRIGHT_JUNIT_OUTPUT_FILE=/app/test-results/results.xml ^
                         -v "%WORKSPACE%\\ui-report:/app/playwright-report" ^
-                        -v "%WORKSPACE%\\test-results:/app/test-results" ^
+                        -v "%WORKSPACE%\\ui-results:/app/test-results" ^
                         %DOCKER_IMAGE% ^
                         npm run test:chromium
                 '''
@@ -74,8 +78,13 @@ stages {
 
 post {
     always {
+        junit(
+            testResults: 'api-results/results.xml,ui-results/results.xml',
+            allowEmptyResults: true
+        )
+
         archiveArtifacts(
-            artifacts: 'api-report/**,ui-report/**,test-results/**',
+            artifacts: 'api-report/**,api-results/**,ui-report/**,ui-results/**',
             allowEmptyArchive: true
         )
 

@@ -18,6 +18,11 @@ export default defineConfig({
         outputFolder: 'playwright-report',
         open: 'never',
     }],
+    ['junit', {
+        outputFile:
+            process.env.PLAYWRIGHT_JUNIT_OUTPUT_FILE ??
+            'test-results/results.xml',
+    }],
     ],
   use: {
     baseURL: environment.uiBaseUrl,
