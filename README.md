@@ -50,8 +50,6 @@ creatio_demo_framework/
 │       ├── login.spec.ts
 │       └── checkout.spec.ts
 │
-├── config/
-│
 ├── Dockerfile
 ├── Jenkinsfile
 ├── playwright.config.ts
