@@ -32,9 +32,15 @@ stages {
                     )
                 ]) {
                     bat '''
+                        if exist api-report rmdir /s /q api-report
+                        if exist test-results rmdir /s /q test-results
+
+                        mkdir api-report
+                        mkdir test-results
+
                         docker run --rm ^
                             -e GOREST_TOKEN=%GOREST_TOKEN% ^
-                            -v "%WORKSPACE%\\playwright-report:/app/playwright-report" ^
+                            -v "%WORKSPACE%\\api-report:/app/playwright-report" ^
                             -v "%WORKSPACE%\\test-results:/app/test-results" ^
                             %DOCKER_IMAGE% ^
                             npm run test:api
@@ -51,8 +57,12 @@ stages {
                 stageResult: 'FAILURE'
             ) {
                 bat '''
+                    if exist ui-report rmdir /s /q ui-report
+
+                    mkdir ui-report
+
                     docker run --rm ^
-                        -v "%WORKSPACE%\\playwright-report:/app/playwright-report" ^
+                        -v "%WORKSPACE%\\ui-report:/app/playwright-report" ^
                         -v "%WORKSPACE%\\test-results:/app/test-results" ^
                         %DOCKER_IMAGE% ^
                         npm run test:chromium
@@ -62,23 +72,30 @@ stages {
     }
 }
 
-    post {
-        always {
-            archiveArtifacts(
-            artifacts: 'playwright-report/,test-results/',
+post {
+    always {
+        archiveArtifacts(
+            artifacts: 'api-report/**,ui-report/**,test-results/**',
             allowEmptyArchive: true
-            )
+        )
 
-                publishHTML([
-                    allowMissing: true,
-                    alwaysLinkToLastBuild: true,
-                    keepAll: true,
-                    reportDir: 'playwright-report',
-                    reportFiles: 'index.html',
-                    reportName: 'Playwright Report'
-                ])
-        }
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: 'ui-report',
+            reportFiles: 'index.html',
+            reportName: 'UI Playwright Report'
+        ])
 
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: false,
+            keepAll: true,
+            reportDir: 'api-report',
+            reportFiles: 'index.html',
+            reportName: 'API Playwright Report'
+        ])
     }
-
+}
 }
